@@ -10,15 +10,6 @@
         :root { --primary: #6366f1; --secondary: #ec4899; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 50%, #f5f3ff 100%); color: #1e293b; min-height: 100vh; }
         h1, h2, h3, .font-brand { font-family: 'Outfit', sans-serif; }
-
-        .gadget-blob {
-            border-radius: 30% 70% 50% 50% / 40% 40% 60% 60%;
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 15px 35px -5px rgba(99, 102, 241, 0.1);
-            transition: all 0.4s ease;
-        }
         .unshaped-card {
             border-radius: 25px;
             background: rgba(255, 255, 255, 0.85);
@@ -42,10 +33,10 @@
         </div>
     </header>
 
-    <!-- Main Profile Container -->
+    <!-- Main Container -->
     <main class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
         
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar -->
         <div class="lg:col-span-1 space-y-3">
             <div class="unshaped-card p-4 space-y-2">
                 <button onclick="switchTab('profile')" id="btn-profile" class="w-full text-left px-4 py-3 rounded-2xl font-bold text-sm bg-indigo-600 text-white transition shadow-md">👤 Personal Profile</button>
@@ -59,7 +50,7 @@
         <!-- Content Area -->
         <div class="lg:col-span-3 space-y-6">
 
-            <!-- 1. PERSONAL PROFILE SECTION -->
+            <!-- 1. Profile Section -->
             <div id="section-profile" class="unshaped-card p-6 md:p-8">
                 <h2 class="text-2xl font-black font-brand text-gray-900 mb-2">Personal Details</h2>
                 <p class="text-xs text-gray-500 mb-6">Manage your personal identification for seamless checkout.</p>
@@ -76,7 +67,7 @@
                 </form>
             </div>
 
-            <!-- 2. ADDRESSES SECTION -->
+            <!-- 2. Addresses Section -->
             <div id="section-addresses" class="unshaped-card p-6 md:p-8 hidden">
                 <div class="flex justify-between items-center mb-6">
                     <div>
@@ -86,7 +77,6 @@
                     <button onclick="toggleAddressForm()" class="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl shadow">+ Add New Address</button>
                 </div>
 
-                <!-- Add Address Form -->
                 <div id="new-address-box" class="hidden mb-6 p-5 bg-indigo-50/60 rounded-2xl border border-indigo-100">
                     <h3 class="font-black text-sm text-indigo-900 mb-4">Add New Delivery Location</h3>
                     <form onsubmit="saveNewAddress(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -102,23 +92,17 @@
                         </div>
                     </form>
                 </div>
-
-                <div id="addresses-list" class="space-y-4">
-                    <!-- Loaded dynamically -->
-                </div>
+                <div id="addresses-list" class="space-y-4"></div>
             </div>
 
-            <!-- 3. ORDERS & RETURNS SECTION -->
+            <!-- 3. Orders Section -->
             <div id="section-orders" class="unshaped-card p-6 md:p-8 hidden">
                 <h2 class="text-2xl font-black font-brand text-gray-900 mb-2">My Orders & History</h2>
                 <p class="text-xs text-gray-500 mb-6">Track status, chat for support, or raise return requests.</p>
-                
-                <div id="orders-container" class="space-y-6">
-                    <!-- Dynamically loaded personal orders -->
-                </div>
+                <div id="orders-container" class="space-y-6"></div>
             </div>
 
-            <!-- 4. ABOUT US SECTION -->
+            <!-- 4. About Section -->
             <div id="section-about" class="unshaped-card p-6 md:p-8 hidden space-y-4">
                 <h2 class="text-2xl font-black font-brand text-gray-900">About AuraGadget</h2>
                 <p class="text-sm text-gray-600 leading-relaxed">
@@ -126,7 +110,7 @@
                 </p>
             </div>
 
-            <!-- 5. CONTACT US SECTION -->
+            <!-- 5. Contact Section -->
             <div id="section-contact" class="unshaped-card p-6 md:p-8 hidden space-y-4 text-center">
                 <h2 class="text-2xl font-black font-brand text-gray-900">Get in Touch</h2>
                 <p class="text-xs text-gray-500 max-w-md mx-auto">Have questions about your gadget order or shipping? Reach out to us directly!</p>
@@ -154,10 +138,10 @@
         </div>
     </div>
 
-    <!-- Firebase SDK & Script Logic -->
+    <!-- Firebase Script Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, updateDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBW-jJt5BzRPldFaazaAausuxZGHuVtoNw",
@@ -171,16 +155,6 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
-        // Function to get or create unique device/user ID
-        function getDeviceUserId() {
-            let userId = localStorage.getItem("aura_device_user_id");
-            if (!userId) {
-                userId = 'user_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-                localStorage.setItem("aura_device_user_id", userId);
-            }
-            return userId;
-        }
 
         document.addEventListener("DOMContentLoaded", function() {
             loadUserProfile();
@@ -204,10 +178,6 @@
                 phone: document.getElementById('prof-phone').value
             };
             localStorage.setItem('aura_user_profile', JSON.stringify(profile));
-            let profilePhone = profile.phone.trim();
-            if (profilePhone) {
-                localStorage.setItem('aura_user_phone', profilePhone);
-            }
             alert('Profile saved successfully! 💾');
         }
 
@@ -269,99 +239,52 @@
             loadUserAddresses();
         }
 
-        // Improved function to load orders with multi-layer matching (UserId + LocalStorage Order IDs + Phone number)
+        // Fetch ALL orders directly from Firestore database
         async function loadUserOrders() {
             let container = document.getElementById('orders-container');
-            container.innerHTML = `<p class="text-xs text-gray-400">Loading your personal orders...</p>`;
+            container.innerHTML = `<p class="text-xs text-gray-400">Loading orders from database...</p>`;
             
             try {
-                const currentUserId = getDeviceUserId();
-                let localOrderIds = JSON.parse(localStorage.getItem('aura_my_order_ids')) || [];
-                let userProfile = JSON.parse(localStorage.getItem('aura_user_profile')) || {};
-                let userPhone = (userProfile.phone || localStorage.getItem('aura_user_phone') || '').trim();
-
-                // 1. First try querying by exact userId
-                const q = query(collection(db, "orders"), where("userId", "==", currentUserId));
-                const querySnapshot = await getDocs(q);
-                
-                let ordersMap = new Map();
+                const querySnapshot = await getDocs(collection(db, "orders"));
+                let orders = [];
                 querySnapshot.forEach((docSnap) => {
-                    ordersMap.set(docSnap.id, { id: docSnap.id, ...docSnap.data() });
+                    orders.push({ id: docSnap.id, ...docSnap.data() });
                 });
-
-                // 2. Fetch all orders from Firestore to safely fallback and match local orders or phone numbers
-                const allOrdersSnap = await getDocs(collection(db, "orders"));
-                allOrdersSnap.forEach((docSnap) => {
-                    let data = docSnap.id;
-                    let orderData = docSnap.data();
-                    let isMatched = false;
-
-                    // Match by stored local order IDs
-                    if (localOrderIds.includes(docSnap.id)) {
-                        isMatched = true;
-                    }
-                    // Match by user's phone number if available
-                    if (userPhone && orderData.customerPhone && orderData.customerPhone.trim() === userPhone) {
-                        isMatched = true;
-                    }
-                    // Match if userId matches
-                    if (orderData.userId === currentUserId) {
-                        isMatched = true;
-                    }
-
-                    if (isMatched && !ordersMap.has(docSnap.id)) {
-                        ordersMap.set(docSnap.id, { id: docSnap.id, ...orderData });
-                    }
-                });
-
-                let orders = Array.from(ordersMap.values());
-                // Sort by timestamp newest first
-                orders.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
 
                 container.innerHTML = '';
                 if (orders.length === 0) {
-                    container.innerHTML = `<p class="text-xs text-gray-400">No personal orders found on this device. Start shopping!</p>`;
+                    container.innerHTML = `<p class="text-xs text-gray-400">No orders found in database yet.</p>`;
                     return;
                 }
 
                 orders.forEach(order => {
-                    let canReturn = false;
-                    let statusLower = (order.status || 'Dispatched').toLowerCase();
-                    if (statusLower.includes('dispatched') || statusLower.includes('out for delivery')) {
-                        canReturn = true;
-                    } else if (statusLower.includes('delivered')) {
-                        let deliveryDate = new Date(order.deliveryTimestamp || order.timestamp || Date.now());
-                        let diffDays = (Date.now() - deliveryDate.getTime()) / (1000 * 3600 * 24);
-                        if (diffDays <= 7) canReturn = true;
-                    }
-
                     container.innerHTML += `
                         <div class="p-5 rounded-2xl border border-indigo-100 bg-white/70 space-y-3">
                             <div class="flex justify-between items-center border-b border-indigo-50 pb-3">
                                 <div>
                                     <span class="text-[10px] font-extrabold px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full uppercase">Order ID: ${order.id.slice(0,8)}</span>
-                                    <p class="text-[11px] text-gray-400 mt-1">Date: ${new Date(order.timestamp || Date.now()).toLocaleString()}</p>
+                                    <p class="text-[11px] text-gray-400 mt-1">Customer: ${order.customerName || 'N/A'} (${order.customerPhone || 'N/A'})</p>
                                 </div>
                                 <div class="text-right">
                                     <span class="px-3 py-1 bg-pink-100 text-pink-700 font-black text-xs rounded-full uppercase">${order.status || 'Dispatched'}</span>
-                                    <p class="text-xs font-bold text-gray-900 mt-1">Total: ${order.total || order.totalAmount || 'N/A'}</p>
+                                    <p class="text-xs font-bold text-gray-900 mt-1">Total: ${order.total || 'N/A'}</p>
                                 </div>
                             </div>
                             <div class="text-xs text-gray-600">
-                                <p class="font-bold mb-1">Items:</p>
-                                <p>${order.itemsSummary || 'Gadget Item Purchase'}</p>
+                                <p class="font-bold mb-1">Items / Details:</p>
+                                <p>${order.itemsSummary || 'Gadget Order'}</p>
+                                <p class="text-[11px] text-gray-500 mt-1">📍 Address: ${order.shippingAddress || 'N/A'}</p>
                             </div>
                             <div class="flex flex-wrap gap-3 pt-2">
-                                <a href="mailto:sumitiitan58@gmail.com?subject=Support regarding Order ${order.id}&body=Hi Admin, I need help with my order." class="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold text-xs rounded-xl hover:bg-indigo-100 transition">💬 Chat with Us</a>
-                                ${canReturn && !order.returnRequested ? `<button onclick="openReturnModal('${order.id}')" class="px-4 py-2 bg-pink-50 border border-pink-200 text-pink-700 font-bold text-xs rounded-xl hover:bg-pink-100 transition">🔄 Request Return</button>` : ''}
-                                ${order.returnRequested ? `<span class="text-xs text-amber-600 font-bold self-center">⚠️ Return Requested: ${order.returnReason || ''} (${order.returnStatus || 'Pending'})</span>` : ''}
+                                <a href="mailto:sumitiitan58@gmail.com?subject=Support regarding Order ${order.id}" class="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold text-xs rounded-xl hover:bg-indigo-100 transition">💬 Chat with Support</a>
+                                <button onclick="openReturnModal('${order.id}')" class="px-4 py-2 bg-pink-50 border border-pink-200 text-pink-700 font-bold text-xs rounded-xl hover:bg-pink-100 transition">🔄 Request Return</button>
                             </div>
                         </div>
                     `;
                 });
             } catch (err) {
                 console.error(err);
-                container.innerHTML = `<p class="text-xs text-red-400">Failed to load orders from Firebase.</p>`;
+                container.innerHTML = `<p class="text-xs text-red-400">Error loading orders: ${err.message}</p>`;
             }
         }
 
@@ -388,11 +311,11 @@
                     returnReason: reason,
                     returnStatus: 'Pending'
                 });
-                alert('Return request submitted successfully to Admin! 🔄');
+                alert('Return request submitted successfully! 🔄');
                 closeReturnModal();
                 loadUserOrders();
             } catch (err) {
-                alert('Error submitting return request: ' + err.message);
+                alert('Error: ' + err.message);
             }
         }
     </script>
