@@ -243,7 +243,6 @@
                 return;
             }
 
-            // Render addresses inside modal
             let addrContainer = document.getElementById('checkout-address-list');
             addrContainer.innerHTML = '';
             addresses.forEach((addr, idx) => {
@@ -282,6 +281,13 @@
             let itemsSummary = cart.map(i => `${i.name} (x${i.quantity || 1})`).join(', ');
             let totalAmount = document.getElementById('summary-total').textContent;
 
+            // Generate or get unique device identifier so orders stay isolated per device
+            let deviceId = localStorage.getItem('aura_device_id');
+            if (!deviceId) {
+                deviceId = 'dev_' + Math.random().toString(36).substring(2, 9);
+                localStorage.setItem('aura_device_id', deviceId);
+            }
+
             let orderData = {
                 customerName: chosenAddress.name,
                 customerPhone: chosenAddress.phone,
@@ -290,12 +296,12 @@
                 total: totalAmount,
                 paymentMethod: paymentMethod,
                 status: 'Dispatched',
+                deviceId: deviceId, // <--- Device ID added here successfully
                 timestamp: Date.now(),
                 returnRequested: false
             };
 
             try {
-                // Button click feedback
                 let btn = document.getElementById('place-order-btn');
                 btn.textContent = "Processing Order...";
                 btn.disabled = true;
