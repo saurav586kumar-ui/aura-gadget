@@ -141,7 +141,7 @@
     <!-- Firebase Script Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBW-jJt5BzRPldFaazaAausuxZGHuVtoNw",
@@ -239,13 +239,21 @@
             loadUserAddresses();
         }
 
-        // Fetch ALL orders directly from Firestore database
+        // Fetch ONLY orders belonging to this specific device/browser
         async function loadUserOrders() {
             let container = document.getElementById('orders-container');
-            container.innerHTML = `<p class="text-xs text-gray-400">Loading orders from database...</p>`;
+            container.innerHTML = `<p class="text-xs text-gray-400">Loading your device orders...</p>`;
             
+            let deviceId = localStorage.getItem('aura_device_id');
+            if (!deviceId) {
+                container.innerHTML = `<p class="text-xs text-gray-400">No personal orders found on this device. Start shopping!</p>`;
+                return;
+            }
+
             try {
-                const querySnapshot = await getDocs(collection(db, "orders"));
+                // Query database to match exact deviceId
+                const q = query(collection(db, "orders"), where("deviceId", "==", deviceId));
+                const querySnapshot = await getDocs(q);
                 let orders = [];
                 querySnapshot.forEach((docSnap) => {
                     orders.push({ id: docSnap.id, ...docSnap.data() });
@@ -253,7 +261,7 @@
 
                 container.innerHTML = '';
                 if (orders.length === 0) {
-                    container.innerHTML = `<p class="text-xs text-gray-400">No orders found in database yet.</p>`;
+                    container.innerHTML = `<p class="text-xs text-gray-400">No orders found on this device. Start shopping!</p>`;
                     return;
                 }
 
