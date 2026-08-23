@@ -35,9 +35,12 @@
             <a href="index.html" class="text-xl font-bold text-gray-300 hover:text-white transition flex items-center gap-2">
                 &larr; Back to Home
             </a>
-            <a href="index.html" class="text-2xl font-extrabold tracking-tight flex items-center gap-2 font-brand">
-                Aura<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#b19cff] via-[#ffb4a2] to-[#9bf6ff]">Gadgets</span>
-            </a>
+            <div class="flex items-center gap-4">
+                <a href="cart.html" class="text-xs font-bold bg-white/10 px-4 py-2 rounded-xl text-white hover:bg-white/20 transition">🛒 Cart</a>
+                <a href="index.html" class="text-2xl font-extrabold tracking-tight flex items-center gap-2 font-brand">
+                    Aura<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#b19cff] via-[#ffb4a2] to-[#9bf6ff]">Gadgets</span>
+                </a>
+            </div>
         </nav>
     </header>
 
@@ -91,9 +94,14 @@
                         <p id="modal-desc" class="text-gray-300 text-sm leading-relaxed mb-6"></p>
                     </div>
 
-                    <button onclick="alert('Order placed successfully!')" class="w-full py-3.5 bg-gradient-to-r from-[#b19cff] to-[#ffb4a2] text-gray-950 font-bold text-sm rounded-xl hover:opacity-90 transition shadow-lg">
-                        Buy Now / Add to Cart 🛍️
-                    </button>
+                    <div class="flex gap-3">
+                        <button onclick="addToCartFromModal()" class="flex-1 py-3.5 bg-white/10 border border-white/20 text-white font-bold text-xs rounded-xl hover:bg-white/20 transition">
+                            Add to Cart 🛒
+                        </button>
+                        <button onclick="buyNowFromModal()" class="flex-1 py-3.5 bg-gradient-to-r from-[#b19cff] to-[#ffb4a2] text-gray-950 font-bold text-xs rounded-xl hover:opacity-90 transition shadow-lg">
+                            Buy Now ⚡
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,6 +109,8 @@
 
     <!-- Script Logic -->
     <script>
+        let currentSelectedProduct = null;
+
         document.addEventListener("DOMContentLoaded", function() {
             const urlParams = new URLSearchParams(window.location.search);
             const categoryName = urlParams.get('name') || "General";
@@ -152,6 +162,7 @@
         }
 
         function openProductModal(prod) {
+            currentSelectedProduct = prod;
             document.getElementById('modal-category').textContent = prod.category;
             document.getElementById('modal-title').textContent = prod.name;
             document.getElementById('modal-price').textContent = prod.price;
@@ -198,6 +209,31 @@
             document.getElementById('product-modal').classList.add('hidden');
             document.getElementById('modal-video').pause();
         }
+
+        // Add to Cart functionality
+        function addToCartFromModal() {
+            if (!currentSelectedProduct) return;
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            
+            let existingItem = cart.find(item => item.name === currentSelectedProduct.name);
+            if (existingItem) {
+                existingItem.quantity = (existingItem.quantity || 1) + 1;
+            } else {
+                cart.push({ ...currentSelectedProduct, quantity: 1 });
+            }
+
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            alert('Product added to cart successfully! 🛒');
+            closeModal();
+        }
+
+        // Buy Now functionality
+        function buyNowFromModal() {
+            if (!currentSelectedProduct) return;
+            let cart = [{ ...currentSelectedProduct, quantity: 1 }];
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            window.location.href = 'cart.html';
+        }
     </script>
 </body>
-</html> 
+</html>
