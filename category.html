@@ -11,62 +11,65 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color); color: #f3f4f6; overflow-x: hidden; }
         h1, h2, h3, .font-brand { font-family: 'Space Grotesk', sans-serif; }
 
-        .organic-blob-1 {
-            border-radius: 35% 65% 60% 40% / 40% 50% 50% 60%;
-            transition: all 0.5s ease;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
         }
-        .organic-blob-1:hover {
-            border-radius: 50% 50% 40% 60% / 60% 40% 60% 40%;
-        }
-        .organic-blob-2 {
-            border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%;
+        .glass-card:hover {
+            border-color: rgba(177, 156, 255, 0.4);
+            transform: translateY(-4px);
         }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-color); }
-        ::-webkit-scrollbar-thumb { background: #b19cff55; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(177, 156, 255, 0.3); border-radius: 10px; }
     </style>
 </head>
 <body class="selection:bg-purple-500/30">
 
     <!-- Header -->
-    <header class="relative py-6 px-6 md:px-12 border-b border-white/5 bg-[#0c0a10]/60 backdrop-blur-xl z-50 sticky top-0">
+    <header class="relative py-5 px-6 md:px-12 border-b border-white/10 bg-[#0c0a10]/80 backdrop-blur-xl z-50 sticky top-0">
         <nav class="max-w-7xl mx-auto flex items-center justify-between">
-            <a href="index.html" class="text-xl font-bold text-gray-300 hover:text-white transition flex items-center gap-2">
+            <a href="index.html" class="text-xs font-bold bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2">
                 &larr; Back to Home
             </a>
-            <div class="flex items-center gap-4">
-                <a href="cart.html" class="text-xs font-bold bg-white/10 px-4 py-2 rounded-xl text-white hover:bg-white/20 transition">🛒 Cart</a>
-                <a href="index.html" class="text-2xl font-extrabold tracking-tight flex items-center gap-2 font-brand">
-                    Aura<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#b19cff] via-[#ffb4a2] to-[#9bf6ff]">Gadgets</span>
-                </a>
-            </div>
+            <a href="index.html" class="text-2xl font-extrabold tracking-tight flex items-center gap-2 font-brand">
+                Aura<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#b19cff] via-[#ffb4a2] to-[#9bf6ff]">Gadgets</span>
+            </a>
+            <a href="cart.html" class="relative p-2.5 bg-white/5 border border-white/10 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2 text-xs font-bold">
+                🛒 Cart <span id="cart-count" class="bg-[#b19cff] text-gray-950 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold">0</span>
+            </a>
         </nav>
     </header>
 
     <!-- Category Header -->
     <section class="py-12 px-6 md:px-12 max-w-7xl mx-auto">
-        <div class="border-b border-white/10 pb-6 mb-10">
-            <span class="text-xs font-semibold text-[#b19cff] uppercase tracking-widest">Collection View</span>
-            <h1 id="category-title" class="text-3xl md:text-5xl font-extrabold text-white mt-2 font-brand">Loading Category...</h1>
+        <div class="border-b border-white/10 pb-6 mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <span class="text-xs font-semibold text-[#b19cff] uppercase tracking-widest">Active Collection</span>
+                <h1 id="category-title" class="text-3xl md:text-5xl font-extrabold text-white mt-2 font-brand">Loading Category...</h1>
+            </div>
+            <p class="text-xs text-gray-400">Showing verified products matching your selected category.</p>
         </div>
 
         <!-- Products Grid -->
-        <div id="category-product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div id="category-product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Dynamic Category Products -->
         </div>
     </section>
 
     <!-- PRODUCT DETAILS POPUP MODAL -->
     <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#13111c] border border-white/15 rounded-3xl max-w-3xl w-full p-6 md:p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="glass-card rounded-3xl max-w-3xl w-full p-6 md:p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto bg-[#13111c]/90">
             <button onclick="closeModal()" class="absolute top-5 right-5 w-9 h-9 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition">
                 ✕
             </button>
 
-            <div id="modal-content" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="space-y-4">
-                    <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 aspect-square organic-blob-2">
+                    <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 aspect-square">
                         <img id="modal-main-img" src="" class="w-full h-full object-cover" alt="Product">
                     </div>
                     <div id="modal-thumbnails" class="flex gap-2 overflow-x-auto pb-2"></div>
@@ -78,7 +81,7 @@
 
                 <div class="flex flex-col justify-between">
                     <div>
-                        <span id="modal-category" class="px-3 py-1 bg-[#b19cff]/10 text-[#b19cff] text-xs font-semibold rounded-full"></span>
+                        <span id="modal-category" class="px-3 py-1 bg-[#b19cff]/10 border border-[#b19cff]/20 text-[#b19cff] text-xs font-semibold rounded-full"></span>
                         <h2 id="modal-title" class="text-2xl md:text-3xl font-bold text-white mt-3 font-brand"></h2>
                         
                         <div class="flex items-center gap-4 my-4">
@@ -94,7 +97,7 @@
                         <p id="modal-desc" class="text-gray-300 text-sm leading-relaxed mb-6"></p>
                     </div>
 
-                    <div class="flex gap-3">
+                    <div class="flex gap-3 pt-4 border-t border-white/10">
                         <button onclick="addToCartFromModal()" class="flex-1 py-3.5 bg-white/10 border border-white/20 text-white font-bold text-xs rounded-xl hover:bg-white/20 transition">
                             Add to Cart 🛒
                         </button>
@@ -117,17 +120,25 @@
 
             document.getElementById('category-title').textContent = categoryName;
             loadCategoryProducts(categoryName);
+            updateCartCount();
         });
 
         function loadCategoryProducts(categoryName) {
+            // LocalStorage aur agar index.html ke hardcoded items bhi match karne hon toh unhe check karein
             let products = JSON.parse(localStorage.getItem('aura_products')) || [];
-            let filtered = products.filter(p => p.category === categoryName);
+            
+            // Case-insensitive matching ensure karne ke liye .toLowerCase() ka use kiya hai
+            let filtered = products.filter(p => (p.category || "").trim().toLowerCase() === categoryName.trim().toLowerCase());
 
             let grid = document.getElementById('category-product-grid');
             grid.innerHTML = '';
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500">No products found in this category.</div>`;
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-24 glass-card rounded-3xl p-8">
+                        <p class="text-gray-400 text-sm mb-2">No items found under "${categoryName}" category.</p>
+                        <a href="index.html" class="inline-block mt-3 px-5 py-2.5 bg-[#b19cff] text-gray-950 font-bold text-xs rounded-xl">Explore Homepage</a>
+                    </div>`;
                 return;
             }
 
@@ -139,22 +150,22 @@
                     : `<span class="absolute top-3 left-3 px-2.5 py-1 bg-amber-500/90 text-gray-950 text-[10px] font-extrabold rounded-full shadow z-10">⭐ ${firstSpec}</span>`;
 
                 grid.innerHTML += `
-                    <div onclick='openProductModal(${JSON.stringify(prod)})' class="organic-blob-1 bg-white/[0.04] border border-white/15 p-5 group cursor-pointer flex flex-col justify-between shadow-xl hover:border-[#b19cff]/60 transition">
+                    <div onclick='openProductModal(${JSON.stringify(prod).replace(/'/g, "&#39;")})' class="glass-card rounded-2xl p-4 group cursor-pointer flex flex-col justify-between">
                         <div>
-                            <div class="relative w-full h-44 organic-blob-2 overflow-hidden bg-black/40 mb-4 border border-white/10">
-                                <img src="${prod.image}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="${prod.name}">
+                            <div class="relative w-full h-48 rounded-xl overflow-hidden bg-black/40 mb-4 border border-white/10">
+                                <img src="${prod.image}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${prod.name}">
                                 ${badgeHTML}
                             </div>
                             <div class="text-[11px] text-[#b19cff] font-semibold mb-1">${prod.category}</div>
                             <h4 class="font-bold text-white text-base line-clamp-1 group-hover:text-[#ffb4a2] transition font-brand">${prod.name}</h4>
-                            <p class="text-gray-400 text-xs line-clamp-2 mt-1">${prod.description}</p>
+                            <p class="text-gray-400 text-xs line-clamp-2 mt-1">${prod.description || ''}</p>
                         </div>
                         <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
                             <div class="flex items-center gap-2">
-                                <span class="text-lg font-extrabold text-[#ffb4a2]">${prod.price}</span>
+                                <span class="text-base font-extrabold text-[#ffb4a2]">${prod.price}</span>
                                 <span class="text-xs text-gray-500 line-through">${prod.actualPrice || ''}</span>
                             </div>
-                            <span class="text-xs text-gray-300 group-hover:text-[#b19cff] underline">Explore &rarr;</span>
+                            <span class="text-xs text-gray-300 group-hover:text-[#b19cff] underline">View &rarr;</span>
                         </div>
                     </div>
                 `;
@@ -210,7 +221,6 @@
             document.getElementById('modal-video').pause();
         }
 
-        // Add to Cart functionality
         function addToCartFromModal() {
             if (!currentSelectedProduct) return;
             let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
@@ -223,16 +233,26 @@
             }
 
             localStorage.setItem('aura_cart', JSON.stringify(cart));
+            updateCartCount();
             alert('Product added to cart successfully! 🛒');
             closeModal();
         }
 
-        // Buy Now functionality
         function buyNowFromModal() {
             if (!currentSelectedProduct) return;
-            let cart = [{ ...currentSelectedProduct, quantity: 1 }];
-            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            let existingItem = cart.find(item => item.name === currentSelectedProduct.name);
+            if (!existingItem) {
+                cart.push({ ...currentSelectedProduct, quantity: 1 });
+                localStorage.setItem('aura_cart', JSON.stringify(cart));
+            }
             window.location.href = 'cart.html';
+        }
+
+        function updateCartCount() {
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            let totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            document.getElementById('cart-count').textContent = totalCount;
         }
     </script>
 </body>
