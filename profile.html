@@ -86,7 +86,7 @@
                     <button onclick="toggleAddressForm()" class="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl shadow">+ Add New Address</button>
                 </div>
 
-                <!-- Add Address Form (Hidden by default) -->
+                <!-- Add Address Form -->
                 <div id="new-address-box" class="hidden mb-6 p-5 bg-indigo-50/60 rounded-2xl border border-indigo-100">
                     <h3 class="font-black text-sm text-indigo-900 mb-4">Add New Delivery Location</h3>
                     <form onsubmit="saveNewAddress(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -111,10 +111,10 @@
             <!-- 3. ORDERS & RETURNS SECTION -->
             <div id="section-orders" class="unshaped-card p-6 md:p-8 hidden">
                 <h2 class="text-2xl font-black font-brand text-gray-900 mb-2">My Orders & History</h2>
-                <p class="text-xs text-gray-500 mb-6">Track status, chat for support, or raise return requests (allowed before dispatch or within 7 days of delivery).</p>
+                <p class="text-xs text-gray-500 mb-6">Track status, chat for support, or raise return requests.</p>
                 
                 <div id="orders-container" class="space-y-6">
-                    <!-- Dynamically loaded orders from Firebase -->
+                    <!-- Dynamically loaded personal orders -->
                 </div>
             </div>
 
@@ -122,17 +122,14 @@
             <div id="section-about" class="unshaped-card p-6 md:p-8 hidden space-y-4">
                 <h2 class="text-2xl font-black font-brand text-gray-900">About AuraGadget</h2>
                 <p class="text-sm text-gray-600 leading-relaxed">
-                    Welcome to <strong class="text-indigo-600">AuraGadget</strong> – your premier online gadget store for next-generation audio devices, smart wearables, and cutting-edge tech accessories. We are dedicated to providing high-performance, authentic, and sleek gadgets tailored for modern lifestyles. No cyber gimmicks, just pure technological elegance and top-notch build quality.
+                    Welcome to <strong class="text-indigo-600">AuraGadget</strong> – your premier online gadget store for next-generation audio devices, smart wearables, and cutting-edge tech accessories.
                 </p>
-                <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 text-xs text-indigo-900 font-semibold">
-                    ✨ Handpicked flagship tech drops delivered right to your doorstep.
-                </div>
             </div>
 
             <!-- 5. CONTACT US SECTION -->
             <div id="section-contact" class="unshaped-card p-6 md:p-8 hidden space-y-4 text-center">
                 <h2 class="text-2xl font-black font-brand text-gray-900">Get in Touch</h2>
-                <p class="text-xs text-gray-500 max-w-md mx-auto">Have questions about your gadget order, shipping, or technical specifications? Reach out to us directly!</p>
+                <p class="text-xs text-gray-500 max-w-md mx-auto">Have questions about your gadget order or shipping? Reach out to us directly!</p>
                 <div class="py-6">
                     <a href="mailto:sumitiitan58@gmail.com" class="inline-block px-8 py-4 bg-gradient-to-r from-indigo-600 to-pink-600 text-white font-black text-xs uppercase tracking-widest rounded-full shadow-lg shadow-indigo-200 hover:scale-105 transition">
                         ✉️ Email Us at sumitiitan58@gmail.com
@@ -147,9 +144,9 @@
     <div id="return-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-indigo-100">
             <h3 class="font-black text-lg text-gray-900 font-brand">Request Product Return</h3>
-            <p class="text-xs text-gray-500">Please provide a valid reason for returning this item. Our admin team will review and approve/reject your request.</p>
+            <p class="text-xs text-gray-500">Please provide a valid reason for returning this item.</p>
             <input type="hidden" id="return-order-id">
-            <textarea id="return-reason" placeholder="Enter reason (e.g., Defective item, wrong size/model)..." rows="4" class="w-full p-3 rounded-xl border border-indigo-200 text-xs focus:outline-none focus:border-indigo-500"></textarea>
+            <textarea id="return-reason" placeholder="Enter reason..." rows="4" class="w-full p-3 rounded-xl border border-indigo-200 text-xs focus:outline-none focus:border-indigo-500"></textarea>
             <div class="flex gap-3 justify-end">
                 <button onclick="closeReturnModal()" class="px-4 py-2 bg-gray-200 font-bold text-xs rounded-xl">Cancel</button>
                 <button onclick="submitReturnRequest()" class="px-4 py-2 bg-pink-600 text-white font-bold text-xs rounded-xl shadow">Submit Request</button>
@@ -160,7 +157,7 @@
     <!-- Firebase SDK & Script Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, updateDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, updateDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBW-jJt5BzRPldFaazaAausuxZGHuVtoNw",
@@ -175,12 +172,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        window.db = db;
-        window.collection = collection;
-        window.getDocs = getDocs;
-        window.addDoc = addDoc;
-        window.updateDoc = updateDoc;
-        window.doc = doc;
+        // Function to get or create unique device/user ID
+        function getDeviceUserId() {
+            let userId = localStorage.getItem("aura_device_user_id");
+            if (!userId) {
+                userId = 'user_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+                localStorage.setItem("aura_device_user_id", userId);
+            }
+            return userId;
+        }
 
         document.addEventListener("DOMContentLoaded", function() {
             loadUserProfile();
@@ -188,7 +188,6 @@
             loadUserOrders();
         });
 
-        // Tab Switching Logic
         window.switchTab = function(tabName) {
             ['profile', 'addresses', 'orders', 'about', 'contact'].forEach(t => {
                 document.getElementById(`section-${t}`).classList.add('hidden');
@@ -198,7 +197,6 @@
             document.getElementById(`btn-${tabName}`).className = "w-full text-left px-4 py-3 rounded-2xl font-bold text-sm bg-indigo-600 text-white transition shadow-md";
         }
 
-        // Profile Handling
         window.saveProfile = function(e) {
             e.preventDefault();
             let profile = {
@@ -206,6 +204,10 @@
                 phone: document.getElementById('prof-phone').value
             };
             localStorage.setItem('aura_user_profile', JSON.stringify(profile));
+            let profilePhone = profile.phone.trim();
+            if (profilePhone) {
+                localStorage.setItem('aura_user_phone', profilePhone);
+            }
             alert('Profile saved successfully! 💾');
         }
 
@@ -217,10 +219,8 @@
             }
         }
 
-        // Address Handling
         window.toggleAddressForm = function() {
-            let box = document.getElementById('new-address-box');
-            box.classList.toggle('hidden');
+            document.getElementById('new-address-box').classList.toggle('hidden');
         }
 
         window.saveNewAddress = function(e) {
@@ -269,25 +269,62 @@
             loadUserAddresses();
         }
 
-        // Orders & Returns Handling
+        // Improved function to load orders with multi-layer matching (UserId + LocalStorage Order IDs + Phone number)
         async function loadUserOrders() {
             let container = document.getElementById('orders-container');
-            container.innerHTML = `<p class="text-xs text-gray-400">Loading orders from server...</p>`;
+            container.innerHTML = `<p class="text-xs text-gray-400">Loading your personal orders...</p>`;
+            
             try {
-                const querySnapshot = await getDocs(collection(db, "orders"));
-                let orders = [];
-                querySnapshot.forEach((doc) => {
-                    orders.push({ id: doc.id, ...doc.data() });
+                const currentUserId = getDeviceUserId();
+                let localOrderIds = JSON.parse(localStorage.getItem('aura_my_order_ids')) || [];
+                let userProfile = JSON.parse(localStorage.getItem('aura_user_profile')) || {};
+                let userPhone = (userProfile.phone || localStorage.getItem('aura_user_phone') || '').trim();
+
+                // 1. First try querying by exact userId
+                const q = query(collection(db, "orders"), where("userId", "==", currentUserId));
+                const querySnapshot = await getDocs(q);
+                
+                let ordersMap = new Map();
+                querySnapshot.forEach((docSnap) => {
+                    ordersMap.set(docSnap.id, { id: docSnap.id, ...docSnap.data() });
                 });
+
+                // 2. Fetch all orders from Firestore to safely fallback and match local orders or phone numbers
+                const allOrdersSnap = await getDocs(collection(db, "orders"));
+                allOrdersSnap.forEach((docSnap) => {
+                    let data = docSnap.id;
+                    let orderData = docSnap.data();
+                    let isMatched = false;
+
+                    // Match by stored local order IDs
+                    if (localOrderIds.includes(docSnap.id)) {
+                        isMatched = true;
+                    }
+                    // Match by user's phone number if available
+                    if (userPhone && orderData.customerPhone && orderData.customerPhone.trim() === userPhone) {
+                        isMatched = true;
+                    }
+                    // Match if userId matches
+                    if (orderData.userId === currentUserId) {
+                        isMatched = true;
+                    }
+
+                    if (isMatched && !ordersMap.has(docSnap.id)) {
+                        ordersMap.set(docSnap.id, { id: docSnap.id, ...orderData });
+                    }
+                });
+
+                let orders = Array.from(ordersMap.values());
+                // Sort by timestamp newest first
+                orders.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
 
                 container.innerHTML = '';
                 if (orders.length === 0) {
-                    container.innerHTML = `<p class="text-xs text-gray-400">No orders found. Start shopping!</p>`;
+                    container.innerHTML = `<p class="text-xs text-gray-400">No personal orders found on this device. Start shopping!</p>`;
                     return;
                 }
 
                 orders.forEach(order => {
-                    // Calculate return eligibility: allowed if status is 'Dispatched' (before delivery) OR within 7 days of 'Delivered'
                     let canReturn = false;
                     let statusLower = (order.status || 'Dispatched').toLowerCase();
                     if (statusLower.includes('dispatched') || statusLower.includes('out for delivery')) {
@@ -307,7 +344,7 @@
                                 </div>
                                 <div class="text-right">
                                     <span class="px-3 py-1 bg-pink-100 text-pink-700 font-black text-xs rounded-full uppercase">${order.status || 'Dispatched'}</span>
-                                    <p class="text-xs font-bold text-gray-900 mt-1">Total: ${order.total}</p>
+                                    <p class="text-xs font-bold text-gray-900 mt-1">Total: ${order.total || order.totalAmount || 'N/A'}</p>
                                 </div>
                             </div>
                             <div class="text-xs text-gray-600">
@@ -339,14 +376,14 @@
         }
 
         window.submitReturnRequest = async function() {
-            let orderId = document.getElementById('return-order-id').value;
+            let orderIdInput = document.getElementById('return-order-id').value;
             let reason = document.getElementById('return-reason').value;
             if (!reason) {
                 alert('Please enter a return reason.');
                 return;
             }
             try {
-                await updateDoc(doc(db, "orders", orderId), {
+                await updateDoc(doc(db, "orders", orderIdInput), {
                     returnRequested: true,
                     returnReason: reason,
                     returnStatus: 'Pending'
