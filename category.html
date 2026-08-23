@@ -3,186 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category Collection | AuraGadgets</title>
+    <title>Category | AuraGadget</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-color: #0c0a10; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color); color: #f3f4f6; overflow-x: hidden; }
-        h1, h2, h3, .font-brand { font-family: 'Space Grotesk', sans-serif; }
+        :root { --primary: #6366f1; --secondary: #ec4899; --accent: #8b5cf6; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 50%, #f5f3ff 100%); color: #1e293b; overflow-x: hidden; min-height: 100vh; }
+        h1, h2, h3, .font-brand { font-family: 'Outfit', sans-serif; }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.3s ease;
+        /* ORGANIC BLOBS & UN-SHAPED CONTAINERS */
+        .gadget-blob {
+            border-radius: 30% 70% 50% 50% / 40% 40% 60% 60%;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 35px -5px rgba(99, 102, 241, 0.1);
         }
-        .glass-card:hover {
-            border-color: rgba(177, 156, 255, 0.4);
-            transform: translateY(-4px);
+        .gadget-blob:hover {
+            border-radius: 50% 50% 40% 60% / 50% 60% 40% 50%;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -5px rgba(236, 72, 153, 0.2);
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-color); }
-        ::-webkit-scrollbar-thumb { background: rgba(177, 156, 255, 0.3); border-radius: 10px; }
+        .unshaped-media {
+            border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        .unshaped-media:hover {
+            border-radius: 55% 45% 45% 55% / 45% 55% 50% 50%;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="selection:bg-purple-500/30">
+<body>
 
     <!-- Header -->
-    <header class="relative py-5 px-6 md:px-12 border-b border-white/10 bg-[#0c0a10]/80 backdrop-blur-xl z-50 sticky top-0">
-        <nav class="max-w-7xl mx-auto flex items-center justify-between">
-            <a href="index.html" class="text-xs font-bold bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2">
-                &larr; Back to Home
+    <header class="py-4 px-6 md:px-12 bg-white/70 backdrop-blur-md sticky top-0 z-50 border-b border-indigo-100 flex items-center justify-between shadow-sm">
+        <a href="index.html" class="text-2xl font-black tracking-tight font-brand flex items-center gap-2">
+            <span class="w-4 h-4 rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 animate-pulse"></span>
+            AURA<span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-pink-600">GADGET</span>
+        </a>
+
+        <div class="flex items-center gap-3 md:gap-5">
+            <a href="cart.html" class="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold text-xs rounded-full hover:bg-indigo-100 transition flex items-center gap-1.5 shadow-sm">
+                🛒 Cart <span id="cart-count" class="bg-indigo-600 text-white px-1.5 py-0.5 rounded-full text-[10px]">0</span>
             </a>
-            <a href="index.html" class="text-2xl font-extrabold tracking-tight flex items-center gap-2 font-brand">
-                Aura<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#b19cff] via-[#ffb4a2] to-[#9bf6ff]">Gadgets</span>
+            <a href="profile.html" class="px-4 py-2 bg-pink-50 border border-pink-200 text-pink-700 font-bold text-xs rounded-full hover:bg-pink-100 transition flex items-center gap-1.5 shadow-sm">
+                👤 My Profile
             </a>
-            <a href="cart.html" class="relative p-2.5 bg-white/5 border border-white/10 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2 text-xs font-bold">
-                🛒 Cart <span id="cart-count" class="bg-[#b19cff] text-gray-950 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold">0</span>
-            </a>
-        </nav>
+        </div>
     </header>
 
-    <!-- Category Header -->
-    <section class="py-12 px-6 md:px-12 max-w-7xl mx-auto">
-        <div class="border-b border-white/10 pb-6 mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-                <span class="text-xs font-semibold text-[#b19cff] uppercase tracking-widest">Active Collection</span>
-                <h1 id="category-title" class="text-3xl md:text-5xl font-extrabold text-white mt-2 font-brand">Loading Category...</h1>
-            </div>
-            <p class="text-xs text-gray-400">Showing verified products matching your selected category.</p>
-        </div>
-
-        <!-- Products Grid -->
-        <div id="category-product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Dynamic Category Products -->
+    <!-- CATEGORY HEADER SECTION -->
+    <section class="py-10 px-6 md:px-12 max-w-7xl mx-auto text-center">
+        <span class="text-xs font-extrabold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">Collection Filter</span>
+        <h1 id="category-title" class="text-3xl md:text-5xl font-black text-gray-900 mt-3 font-brand">Loading Category...</h1>
+        <p class="text-gray-500 text-sm mt-2">Browse all the high-end gadgets curated under this collection.</p>
+        <div class="mt-6">
+            <a href="index.html" class="px-6 py-2.5 bg-white border border-indigo-200 text-indigo-600 font-bold text-xs rounded-full hover:bg-indigo-50 transition shadow-sm inline-flex items-center gap-2">
+                &larr; Back to Home
+            </a>
         </div>
     </section>
 
-    <!-- PRODUCT DETAILS POPUP MODAL -->
-    <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="glass-card rounded-3xl max-w-3xl w-full p-6 md:p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto bg-[#13111c]/90">
-            <button onclick="closeModal()" class="absolute top-5 right-5 w-9 h-9 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition">
+    <!-- PRODUCTS GRID FOR CATEGORY -->
+    <section class="py-6 px-6 md:px-12 max-w-7xl mx-auto mb-16">
+        <div id="category-product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Dynamically Loaded Category Products -->
+        </div>
+    </section>
+
+    <!-- PRODUCT DETAIL POPUP MODAL -->
+    <div id="product-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto transition-all duration-300 opacity-0">
+        <div class="bg-white border border-indigo-100 w-full max-w-4xl relative shadow-2xl rounded-3xl p-6 md:p-10 transform scale-95 transition-transform duration-300" id="modal-container">
+            <button onclick="closeModal()" class="absolute top-6 right-6 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 hover:bg-pink-100 hover:text-pink-600 transition font-bold z-20">
                 ✕
             </button>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <!-- Left: Media -->
                 <div class="space-y-4">
-                    <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 aspect-square">
+                    <div class="w-full aspect-square unshaped-media bg-slate-100 border border-indigo-50 shadow-inner">
                         <img id="modal-main-img" src="" class="w-full h-full object-cover" alt="Product">
                     </div>
-                    <div id="modal-thumbnails" class="flex gap-2 overflow-x-auto pb-2"></div>
-                    <div id="modal-video-container" class="hidden mt-4">
-                        <label class="block text-xs font-semibold text-[#ffb4a2] mb-1">Product Video Preview:</label>
-                        <video id="modal-video" controls class="w-full rounded-xl border border-white/10 max-h-48 object-cover"></video>
-                    </div>
+                    <div id="modal-thumbnails" class="flex gap-2 overflow-x-auto pb-2 justify-center"></div>
                 </div>
 
+                <!-- Right: Details -->
                 <div class="flex flex-col justify-between">
                     <div>
-                        <span id="modal-category" class="px-3 py-1 bg-[#b19cff]/10 border border-[#b19cff]/20 text-[#b19cff] text-xs font-semibold rounded-full"></span>
-                        <h2 id="modal-title" class="text-2xl md:text-3xl font-bold text-white mt-3 font-brand"></h2>
+                        <span id="modal-category" class="px-3 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-full uppercase tracking-wider border border-indigo-100"></span>
+                        <h2 id="modal-title" class="text-2xl md:text-3xl font-black text-gray-900 mt-3 font-brand leading-snug"></h2>
                         
-                        <div class="flex items-center gap-4 my-4">
-                            <span id="modal-price" class="text-2xl font-extrabold text-[#ffb4a2]"></span>
-                            <span id="modal-actual-price" class="text-sm text-gray-500 line-through"></span>
+                        <!-- Price Centered Container -->
+                        <div class="flex items-center justify-center gap-4 my-5 bg-gradient-to-r from-indigo-50 to-pink-50 py-3 rounded-2xl border border-indigo-100/60">
+                            <span id="modal-price" class="text-3xl font-black text-pink-600"></span>
+                            <span id="modal-actual-price" class="text-sm text-gray-400 line-through font-bold"></span>
                         </div>
 
-                        <div id="modal-spec-badge" class="inline-block px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold rounded-lg mb-4">
-                            ⭐ <span id="modal-spec-text"></span>
-                        </div>
-
-                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Description</p>
-                        <p id="modal-desc" class="text-gray-300 text-sm leading-relaxed mb-6"></p>
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Overview</p>
+                        <p id="modal-desc" class="text-gray-600 text-sm leading-relaxed mb-6"></p>
                     </div>
 
-                    <div class="flex gap-3 pt-4 border-t border-white/10">
-                        <button onclick="addToCartFromModal()" class="flex-1 py-3.5 bg-white/10 border border-white/20 text-white font-bold text-xs rounded-xl hover:bg-white/20 transition">
-                            Add to Cart 🛒
-                        </button>
-                        <button onclick="buyNowFromModal()" class="flex-1 py-3.5 bg-gradient-to-r from-[#b19cff] to-[#ffb4a2] text-gray-950 font-bold text-xs rounded-xl hover:opacity-90 transition shadow-lg">
-                            Buy Now ⚡
-                        </button>
-                    </div>
+                    <button onclick="addToCartFromModal()" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-pink-600 text-white font-extrabold text-xs uppercase tracking-widest rounded-full hover:opacity-95 transition shadow-lg shadow-indigo-200">
+                        Add to Cart 🛒
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Script Logic -->
-    <script>
-        let currentSelectedProduct = null;
+    <!-- Footer -->
+    <footer class="text-center py-12 border-t border-indigo-100 text-gray-500 text-xs mt-16 bg-white font-brand tracking-widest uppercase">
+        <p>&copy; 2026 AURA GADGET. ALL RIGHTS RESERVED.</p>
+    </footer>
 
-        document.addEventListener("DOMContentLoaded", function() {
+    <!-- FIREBASE & SCRIPT LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBW-jJt5BzRPldFaazaAausuxZGHuVtoNw",
+            authDomain: "auragadgets-c3a7c.firebaseapp.com",
+            projectId: "auragadgets-c3a7c",
+            storageBucket: "auragadgets-c3a7c.firebasestorage.app",
+            messagingSenderId: "119527057995",
+            appId: "1:119527057995:web:5f3b2173af91861d1cbbce",
+            measurementId: "G-54CD81QGGR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let currentActiveModalProduct = null;
+        window.currentProductsList = [];
+
+        document.addEventListener("DOMContentLoaded", async function() {
+            updateCartBadge();
+
+            // Get category name from URL parameters
             const urlParams = new URLSearchParams(window.location.search);
-            const categoryName = urlParams.get('name') || "General";
+            const categoryName = urlParams.get('name');
 
-            document.getElementById('category-title').textContent = categoryName;
-            loadCategoryProducts(categoryName);
-            updateCartCount();
-        });
-
-        function loadCategoryProducts(categoryName) {
-            // LocalStorage aur agar index.html ke hardcoded items bhi match karne hon toh unhe check karein
-            let products = JSON.parse(localStorage.getItem('aura_products')) || [];
-            
-            // Case-insensitive matching ensure karne ke liye .toLowerCase() ka use kiya hai
-            let filtered = products.filter(p => (p.category || "").trim().toLowerCase() === categoryName.trim().toLowerCase());
-
-            let grid = document.getElementById('category-product-grid');
-            grid.innerHTML = '';
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-24 glass-card rounded-3xl p-8">
-                        <p class="text-gray-400 text-sm mb-2">No items found under "${categoryName}" category.</p>
-                        <a href="index.html" class="inline-block mt-3 px-5 py-2.5 bg-[#b19cff] text-gray-950 font-bold text-xs rounded-xl">Explore Homepage</a>
-                    </div>`;
+            if (!categoryName) {
+                document.getElementById('category-title').textContent = "Category Not Specified";
+                document.getElementById('category-product-grid').innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 font-bold">Please select a category from the home page.</div>`;
                 return;
             }
 
-            filtered.forEach(prod => {
-                let firstSpec = prod.specs ? prod.specs.split(',')[0] : 'Vibe Certified';
-                let isOutOfStock = prod.status === "Out of Stock";
-                let badgeHTML = isOutOfStock 
-                    ? `<span class="absolute top-3 left-3 px-2.5 py-1 bg-red-500/80 text-white text-[10px] font-bold rounded-full z-10">Out of Stock</span>`
-                    : `<span class="absolute top-3 left-3 px-2.5 py-1 bg-amber-500/90 text-gray-950 text-[10px] font-extrabold rounded-full shadow z-10">⭐ ${firstSpec}</span>`;
+            document.getElementById('category-title').textContent = `${categoryName} 🛍️`;
+            document.title = `${categoryName} | AuraGadget`;
 
+            let products = [];
+            try {
+                const querySnapshot = await getDocs(collection(db, "products"));
+                querySnapshot.forEach((doc) => {
+                    products.push({ id: doc.id, ...doc.data() });
+                });
+            } catch (error) {
+                console.log("Firestore error, falling back to localStorage:", error);
+                products = JSON.parse(localStorage.getItem('aura_products')) || [];
+            }
+
+            if (products.length === 0) {
+                products = JSON.parse(localStorage.getItem('aura_products')) || [];
+            }
+
+            // Filter products matching the category name
+            const filteredProducts = products.filter(p => (p.category || '').toLowerCase() === categoryName.toLowerCase());
+            window.currentProductsList = filteredProducts;
+
+            renderCategoryProducts(filteredProducts, categoryName);
+        });
+
+        function updateCartBadge() {
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            let totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            document.getElementById('cart-count').textContent = totalCount;
+        }
+
+        function renderCategoryProducts(products, categoryName) {
+            let grid = document.getElementById('category-product-grid');
+            grid.innerHTML = '';
+
+            if (products.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <p class="text-gray-500 font-bold text-sm mb-4">No gadgets found in "${categoryName}".</p>
+                        <a href="index.html" class="px-6 py-3 bg-indigo-600 text-white font-bold text-xs uppercase rounded-full shadow-lg">Browse All Products</a>
+                    </div>
+                `;
+                return;
+            }
+
+            products.forEach((prod, idx) => {
                 grid.innerHTML += `
-                    <div onclick='openProductModal(${JSON.stringify(prod).replace(/'/g, "&#39;")})' class="glass-card rounded-2xl p-4 group cursor-pointer flex flex-col justify-between">
+                    <div onclick='openProductModalIndex(${idx})' class="gadget-blob p-5 cursor-pointer flex flex-col justify-between group">
                         <div>
-                            <div class="relative w-full h-48 rounded-xl overflow-hidden bg-black/40 mb-4 border border-white/10">
-                                <img src="${prod.image}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${prod.name}">
-                                ${badgeHTML}
+                            <div class="relative w-full h-44 unshaped-media bg-slate-100 mb-4">
+                                <img src="${prod.image}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="${prod.name}">
+                                <span class="absolute top-3 left-3 px-2.5 py-1 bg-white/90 backdrop-blur text-indigo-700 text-[9px] font-black rounded-full shadow-sm uppercase tracking-wider">${prod.category}</span>
                             </div>
-                            <div class="text-[11px] text-[#b19cff] font-semibold mb-1">${prod.category}</div>
-                            <h4 class="font-bold text-white text-base line-clamp-1 group-hover:text-[#ffb4a2] transition font-brand">${prod.name}</h4>
-                            <p class="text-gray-400 text-xs line-clamp-2 mt-1">${prod.description || ''}</p>
+                            <h4 class="font-black text-gray-900 text-base line-clamp-1 group-hover:text-pink-600 transition font-brand">${prod.name}</h4>
+                            <p class="text-gray-500 text-xs line-clamp-2 mt-1 leading-relaxed">${prod.description}</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-base font-extrabold text-[#ffb4a2]">${prod.price}</span>
-                                <span class="text-xs text-gray-500 line-through">${prod.actualPrice || ''}</span>
-                            </div>
-                            <span class="text-xs text-gray-300 group-hover:text-[#b19cff] underline">View &rarr;</span>
+                        
+                        <div class="mt-4 pt-3 border-t border-indigo-100/60 flex items-center justify-center gap-3">
+                            <span class="text-xl font-black text-pink-600">${prod.price}</span>
+                            <span class="text-xs text-gray-400 line-through font-bold">${prod.actualPrice || ''}</span>
                         </div>
                     </div>
                 `;
             });
         }
 
-        function openProductModal(prod) {
-            currentSelectedProduct = prod;
+        window.openProductModalIndex = function(index) {
+            let prod = window.currentProductsList[index];
+            currentActiveModalProduct = prod;
+
             document.getElementById('modal-category').textContent = prod.category;
             document.getElementById('modal-title').textContent = prod.name;
             document.getElementById('modal-price').textContent = prod.price;
             document.getElementById('modal-actual-price').textContent = prod.actualPrice || '';
-            document.getElementById('modal-desc').textContent = prod.description || 'No description provided.';
+            document.getElementById('modal-desc').textContent = prod.description || 'No detailed specifications provided.';
             
-            let firstSpec = prod.specs ? prod.specs.split(',')[0] : 'Top Feature';
-            document.getElementById('modal-spec-text').textContent = firstSpec;
-
             let mainImg = document.getElementById('modal-main-img');
             mainImg.src = prod.image;
 
@@ -199,60 +249,44 @@
 
             allImages.forEach(imgSrc => {
                 thumbContainer.innerHTML += `
-                    <img src="${imgSrc}" onclick="document.getElementById('modal-main-img').src='${imgSrc}'" class="w-16 h-16 rounded-xl object-cover border border-white/20 cursor-pointer hover:border-[#b19cff] transition flex-shrink-0">
+                    <div class="w-12 h-12 unshaped-media bg-slate-100 cursor-pointer border border-indigo-100 hover:border-pink-500 transition">
+                        <img src="${imgSrc}" onclick="document.getElementById('modal-main-img').src='${imgSrc}'" class="w-full h-full object-cover">
+                    </div>
                 `;
             });
 
-            let videoContainer = document.getElementById('modal-video-container');
-            let videoElement = document.getElementById('modal-video');
-            if (prod.video && prod.video.trim() !== "") {
-                videoElement.src = prod.video;
-                videoContainer.classList.remove('hidden');
-            } else {
-                videoElement.src = "";
-                videoContainer.classList.add('hidden');
-            }
-
-            document.getElementById('product-modal').classList.remove('hidden');
+            let modal = document.getElementById('product-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                document.getElementById('modal-container').classList.remove('scale-95');
+            }, 10);
         }
 
-        function closeModal() {
-            document.getElementById('product-modal').classList.add('hidden');
-            document.getElementById('modal-video').pause();
+        window.closeModal = function() {
+            let modal = document.getElementById('product-modal');
+            modal.classList.add('opacity-0');
+            document.getElementById('modal-container').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 250);
         }
 
-        function addToCartFromModal() {
-            if (!currentSelectedProduct) return;
+        window.addToCartFromModal = function() {
+            if (!currentActiveModalProduct) return;
             let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            let existingItem = cart.find(item => item.name === currentActiveModalProduct.name);
             
-            let existingItem = cart.find(item => item.name === currentSelectedProduct.name);
             if (existingItem) {
                 existingItem.quantity = (existingItem.quantity || 1) + 1;
             } else {
-                cart.push({ ...currentSelectedProduct, quantity: 1 });
+                cart.push({ ...currentActiveModalProduct, quantity: 1 });
             }
 
             localStorage.setItem('aura_cart', JSON.stringify(cart));
-            updateCartCount();
-            alert('Product added to cart successfully! 🛒');
+            updateCartBadge();
+            alert('Added to Cart Successfully! 🛍️');
             closeModal();
-        }
-
-        function buyNowFromModal() {
-            if (!currentSelectedProduct) return;
-            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
-            let existingItem = cart.find(item => item.name === currentSelectedProduct.name);
-            if (!existingItem) {
-                cart.push({ ...currentSelectedProduct, quantity: 1 });
-                localStorage.setItem('aura_cart', JSON.stringify(cart));
-            }
-            window.location.href = 'cart.html';
-        }
-
-        function updateCartCount() {
-            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
-            let totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-            document.getElementById('cart-count').textContent = totalCount;
         }
     </script>
 </body>
