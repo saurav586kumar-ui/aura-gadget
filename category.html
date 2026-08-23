@@ -11,7 +11,6 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 50%, #f5f3ff 100%); color: #1e293b; overflow-x: hidden; min-height: 100vh; }
         h1, h2, h3, .font-brand { font-family: 'Outfit', sans-serif; }
 
-        /* ORGANIC BLOBS & UN-SHAPED CONTAINERS */
         .gadget-blob {
             border-radius: 30% 70% 50% 50% / 40% 40% 60% 60%;
             overflow: hidden;
@@ -123,7 +122,7 @@
         <p>&copy; 2026 AURA GADGET. ALL RIGHTS RESERVED.</p>
     </footer>
 
-    <!-- FIREBASE & SCRIPT LOGIC -->
+    <!-- SCRIPT LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -147,7 +146,6 @@
         document.addEventListener("DOMContentLoaded", async function() {
             updateCartBadge();
 
-            // Get category name from URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const categoryName = urlParams.get('name');
 
@@ -161,24 +159,36 @@
             document.title = `${categoryName} | AuraGadget`;
 
             let products = [];
+            
+            // Pehle localStorage se check karo taaki newly added/updated products turant dikhein
+            let localProducts = JSON.parse(localStorage.getItem('aura_products')) || [];
+            if (localProducts.length > 0) {
+                products = localProducts;
+            }
+
+            // Phir Firebase se fetch karne ki koshish karo aur merge/override karo
             try {
                 const querySnapshot = await getDocs(collection(db, "products"));
+                let firebaseProducts = [];
                 querySnapshot.forEach((doc) => {
-                    products.push({ id: doc.id, ...doc.data() });
+                    firebaseProducts.category = doc.data().category; // ensure properties
+                    firebaseProducts.push({ id: doc.id, ...doc.data() });
                 });
+                if (firebaseProducts.length > 0) {
+                    products = firebaseProducts;
+                }
             } catch (error) {
-                console.log("Firestore error, falling back to localStorage:", error);
-                products = JSON.parse(localStorage.getItem('aura_products')) || [];
+                console.log("Using local storage products cache:", error);
             }
 
-            if (products.length === 0) {
-                products = JSON.parse(localStorage.getItem('aura_products')) || [];
-            }
+            // Case-insensitive filtering taaki category name match hone mein koi dikkat na aaye
+            const filteredProducts = products.filter(p => {
+                let pCat = (p.category || '').trim().toLowerCase();
+                let targetCat = categoryName.trim().toLowerCase();
+                return pCat === targetCat;
+            });
 
-            // Filter products matching the category name
-            const filteredProducts = products.filter(p => (p.category || '').toLowerCase() === categoryName.toLowerCase());
             window.currentProductsList = filteredProducts;
-
             renderCategoryProducts(filteredProducts, categoryName);
         });
 
@@ -194,9 +204,10 @@
 
             if (products.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-full text-center py-16">
-                        <p class="text-gray-500 font-bold text-sm mb-4">No gadgets found in "${categoryName}".</p>
-                        <a href="index.html" class="px-6 py-3 bg-indigo-600 text-white font-bold text-xs uppercase rounded-full shadow-lg">Browse All Products</a>
+                    <div class="col-span-full text-center py-16 bg-white/50 backdrop-blur rounded-3xl border border-indigo-100">
+                        <p class="text-gray-600 font-bold text-sm mb-2">No gadgets found in "${categoryName}".</p>
+                        <p class="text-gray-400 text-xs mb-6">Make sure you've added products under this exact category name.</p>
+                        <a href="index.html" class="px-6 py-3 bg-indigo-600 text-white font-bold text-xs uppercase rounded-full shadow-lg">Back to Home</a>
                     </div>
                 `;
                 return;
@@ -207,11 +218,11 @@
                     <div onclick='openProductModalIndex(${idx})' class="gadget-blob p-5 cursor-pointer flex flex-col justify-between group">
                         <div>
                             <div class="relative w-full h-44 unshaped-media bg-slate-100 mb-4">
-                                <img src="${prod.image}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="${prod.name}">
+                                <img src="${prod.image || 'https://via.placeholder.com/300'}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="${prod.name}">
                                 <span class="absolute top-3 left-3 px-2.5 py-1 bg-white/90 backdrop-blur text-indigo-700 text-[9px] font-black rounded-full shadow-sm uppercase tracking-wider">${prod.category}</span>
                             </div>
                             <h4 class="font-black text-gray-900 text-base line-clamp-1 group-hover:text-pink-600 transition font-brand">${prod.name}</h4>
-                            <p class="text-gray-500 text-xs line-clamp-2 mt-1 leading-relaxed">${prod.description}</p>
+                            <p class="text-gray-500 text-xs line-clamp-2 mt-1 leading-relaxed">${prod.description || 'No description available.'}</p>
                         </div>
                         
                         <div class="mt-4 pt-3 border-t border-indigo-100/60 flex items-center justify-center gap-3">
