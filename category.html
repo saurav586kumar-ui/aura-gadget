@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Collection | AuraGadgets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #0c0a10; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color); color: #f3f4f6; overflow-x: hidden; }
+        h1, h2, h3, .font-brand { font-family: 'Space Grotesk', sans-serif; }
+
+        .organic-blob-1 {
+            border-radius: 35% 65% 60% 40% / 40% 50% 50% 60%;
+            transition: all 0.5s ease;
+        }
+        .organic-blob-1:hover {
+            border-radius: 50% 50% 40% 60% / 60% 40% 60% 40%;
+        }
+        .organic-blob-2 {
+            border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: #b19cff55; border-radius: 10px; }
+    </style>
+</head>
+<body class="selection:bg-purple-500/30">
+
+    <!-- Header -->
+    <header class="relative py-6 px-6 md:px-12 border-b border-white/5 bg-[#0c0a10]/60 backdrop-blur-xl z-50 sticky top-0">
+        <nav class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="text-xl font-bold text-gray-300 hover:text-white transition flex items-center gap-2">
+                &larr; Back to Home
+            </a>
+            <a href="index.html" class="text-2xl font-extrabold tracking-tight flex items-center gap-2 font-brand">
+                Aura<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#b19cff] via-[#ffb4a2] to-[#9bf6ff]">Gadgets</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Category Header -->
+    <section class="py-12 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="border-b border-white/10 pb-6 mb-10">
+            <span class="text-xs font-semibold text-[#b19cff] uppercase tracking-widest">Collection View</span>
+            <h1 id="category-title" class="text-3xl md:text-5xl font-extrabold text-white mt-2 font-brand">Loading Category...</h1>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="category-product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Dynamic Category Products -->
+        </div>
+    </section>
+
+    <!-- PRODUCT DETAILS POPUP MODAL -->
+    <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#13111c] border border-white/15 rounded-3xl max-w-3xl w-full p-6 md:p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-5 right-5 w-9 h-9 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition">
+                ✕
+            </button>
+
+            <div id="modal-content" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 aspect-square organic-blob-2">
+                        <img id="modal-main-img" src="" class="w-full h-full object-cover" alt="Product">
+                    </div>
+                    <div id="modal-thumbnails" class="flex gap-2 overflow-x-auto pb-2"></div>
+                    <div id="modal-video-container" class="hidden mt-4">
+                        <label class="block text-xs font-semibold text-[#ffb4a2] mb-1">Product Video Preview:</label>
+                        <video id="modal-video" controls class="w-full rounded-xl border border-white/10 max-h-48 object-cover"></video>
+                    </div>
+                </div>
+
+                <div class="flex flex-col justify-between">
+                    <div>
+                        <span id="modal-category" class="px-3 py-1 bg-[#b19cff]/10 text-[#b19cff] text-xs font-semibold rounded-full"></span>
+                        <h2 id="modal-title" class="text-2xl md:text-3xl font-bold text-white mt-3 font-brand"></h2>
+                        
+                        <div class="flex items-center gap-4 my-4">
+                            <span id="modal-price" class="text-2xl font-extrabold text-[#ffb4a2]"></span>
+                            <span id="modal-actual-price" class="text-sm text-gray-500 line-through"></span>
+                        </div>
+
+                        <div id="modal-spec-badge" class="inline-block px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold rounded-lg mb-4">
+                            ⭐ <span id="modal-spec-text"></span>
+                        </div>
+
+                        <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Description</p>
+                        <p id="modal-desc" class="text-gray-300 text-sm leading-relaxed mb-6"></p>
+                    </div>
+
+                    <button onclick="alert('Order placed successfully!')" class="w-full py-3.5 bg-gradient-to-r from-[#b19cff] to-[#ffb4a2] text-gray-950 font-bold text-sm rounded-xl hover:opacity-90 transition shadow-lg">
+                        Buy Now / Add to Cart 🛍️
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Logic -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryName = urlParams.get('name') || "General";
+
+            document.getElementById('category-title').textContent = categoryName;
+            loadCategoryProducts(categoryName);
+        });
+
+        function loadCategoryProducts(categoryName) {
+            let products = JSON.parse(localStorage.getItem('aura_products')) || [];
+            let filtered = products.filter(p => p.category === categoryName);
+
+            let grid = document.getElementById('category-product-grid');
+            grid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500">No products found in this category.</div>`;
+                return;
+            }
+
+            filtered.forEach(prod => {
+                let firstSpec = prod.specs ? prod.specs.split(',')[0] : 'Vibe Certified';
+                let isOutOfStock = prod.status === "Out of Stock";
+                let badgeHTML = isOutOfStock 
+                    ? `<span class="absolute top-3 left-3 px-2.5 py-1 bg-red-500/80 text-white text-[10px] font-bold rounded-full z-10">Out of Stock</span>`
+                    : `<span class="absolute top-3 left-3 px-2.5 py-1 bg-amber-500/90 text-gray-950 text-[10px] font-extrabold rounded-full shadow z-10">⭐ ${firstSpec}</span>`;
+
+                grid.innerHTML += `
+                    <div onclick='openProductModal(${JSON.stringify(prod)})' class="organic-blob-1 bg-white/[0.04] border border-white/15 p-5 group cursor-pointer flex flex-col justify-between shadow-xl hover:border-[#b19cff]/60 transition">
+                        <div>
+                            <div class="relative w-full h-44 organic-blob-2 overflow-hidden bg-black/40 mb-4 border border-white/10">
+                                <img src="${prod.image}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="${prod.name}">
+                                ${badgeHTML}
+                            </div>
+                            <div class="text-[11px] text-[#b19cff] font-semibold mb-1">${prod.category}</div>
+                            <h4 class="font-bold text-white text-base line-clamp-1 group-hover:text-[#ffb4a2] transition font-brand">${prod.name}</h4>
+                            <p class="text-gray-400 text-xs line-clamp-2 mt-1">${prod.description}</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-extrabold text-[#ffb4a2]">${prod.price}</span>
+                                <span class="text-xs text-gray-500 line-through">${prod.actualPrice || ''}</span>
+                            </div>
+                            <span class="text-xs text-gray-300 group-hover:text-[#b19cff] underline">Explore &rarr;</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openProductModal(prod) {
+            document.getElementById('modal-category').textContent = prod.category;
+            document.getElementById('modal-title').textContent = prod.name;
+            document.getElementById('modal-price').textContent = prod.price;
+            document.getElementById('modal-actual-price').textContent = prod.actualPrice || '';
+            document.getElementById('modal-desc').textContent = prod.description || 'No description provided.';
+            
+            let firstSpec = prod.specs ? prod.specs.split(',')[0] : 'Top Feature';
+            document.getElementById('modal-spec-text').textContent = firstSpec;
+
+            let mainImg = document.getElementById('modal-main-img');
+            mainImg.src = prod.image;
+
+            let thumbContainer = document.getElementById('modal-thumbnails');
+            thumbContainer.innerHTML = '';
+            
+            let allImages = [prod.image];
+            if (prod.extraImages) {
+                try {
+                    let parsedExtra = JSON.parse(prod.extraImages);
+                    if (Array.isArray(parsedExtra)) allImages = allImages.concat(parsedExtra);
+                } catch(e) {}
+            }
+
+            allImages.forEach(imgSrc => {
+                thumbContainer.innerHTML += `
+                    <img src="${imgSrc}" onclick="document.getElementById('modal-main-img').src='${imgSrc}'" class="w-16 h-16 rounded-xl object-cover border border-white/20 cursor-pointer hover:border-[#b19cff] transition flex-shrink-0">
+                `;
+            });
+
+            let videoContainer = document.getElementById('modal-video-container');
+            let videoElement = document.getElementById('modal-video');
+            if (prod.video && prod.video.trim() !== "") {
+                videoElement.src = prod.video;
+                videoContainer.classList.remove('hidden');
+            } else {
+                videoElement.src = "";
+                videoContainer.classList.add('hidden');
+            }
+
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+            document.getElementById('modal-video').pause();
+        }
+    </script>
+</body>
+</html> 
